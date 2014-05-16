@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8 />
+  <title>Ukraine gross region product per capita distribution</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css" />
+  <style>
+  body { margin: 0; padding: 0; }
+  .leaflet-container { background: #fff; }
+  #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+  </style>
+</head>
+<body>
+  <div id='map'></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
+  <script src='regionsCoordinates.js'></script>
+  <script src='regionsData.js'></script>
+  <script>
+  var initialCoordinates = [48.47, 31.39];
+  var intialScale = 6;
+
+  var grp = [];
+  for (var region in regionsData) {
+    grp.push(regionsData[region].grp);
+  }
+
+  grp.sort(function (a, b) { return a - b });
+
+  var grpLength = grp.length;
+  var grpMin = grp[0];
+  var grpMax = grp[grpLength - 1];
+  var grpMedian = median(grp);
+
+  function median(arr) {
+      if (arr.length == 0) {
+        return null
+      }
+
+      arr.sort(function (a, b) { return a - b });
+      var mid = Math.floor(arr.length / 2);
+
+      if ((arr.length % 2) == 1) { // length is odd
+        return arr[mid];
+      } else {
+        return (arr[mid - 1] + arr[mid]) / 2;
+      }
+  }
+
+  function style(feature) {
+    var regionId = feature.properties.iso_3166_2;
+    var region = regionsData[regionId];
+    var fillOpacity = region.grp / grpMax;
+
+    return {
+      fillColor: '#000',
+      weight: 1,
+      opacity: .2,
+      color: '#000',
+      fillOpacity: fillOpacity
+    };
+  }
+
+  var map = L.map('map').setView(initialCoordinates, intialScale);
+  L.geoJson(regionsCoordinates, { style: style }).addTo(map);
+  </script>
+</body>
+</html>
