@@ -1,4 +1,4 @@
-var regionsData = {
+{
   "UA-05": { "grp": "20253", "name": "Vinnyts'ka Oblast'", "name_ru": "Винницкая область" },
   "UA-07": { "grp": "19249", "name": "Volyns'ka Oblast'", "name_ru": "Волынская область" },
   "UA-09": { "grp": "25950", "name": "Luhans'ka Oblast'", "name_ru": "Луганская область" },
