@@ -5,9 +5,70 @@
   <title>Ukraine gross region product per capita distribution</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css" />
   <style>
-  body { margin: 0; padding: 0; }
-  .leaflet-container { background: #fff; }
-  #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .leaflet-container {
+    background: #fff;
+    color: #333;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arimo, Arial, sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.42857;
+  }
+
+  #map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
+
+  .info {
+  }
+
+  .info-header {
+  }
+
+  .info-header h4 {
+    background: #6c6;
+    color: #fff;
+    margin: 0;
+    padding: .5em 1em;
+  }
+
+  .info-header h4:first-child {
+    padding-top: 1em;
+  }
+
+  .info-header h4:last-child {
+    padding-bottom: 1em;
+  }
+
+
+  .info-region {
+    background: #eee;
+    padding: .5em 1em;
+  }
+
+  .info-region:after,
+  .info-header:before {
+    clear: both;
+    content: '';
+    display: block;
+  }
+
+  .info .region-name {
+    float: left;
+  }
+
+  .info .region-grp {
+    font-size: 2em;
+    float: right;
+  }
+
   </style>
 </head>
 <body>
@@ -64,8 +125,72 @@
         };
       }
 
+      var geojson;
+
+      function highlightFeature(e) {
+        var layer = e.target;
+
+        layer.setStyle({
+          weight: 2,
+          opacity: 1,
+          color: '#6c6'
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera) {
+          layer.bringToFront();
+        }
+
+        info.update(layer.feature.properties);
+      }
+
+      function resetHighlight(e) {
+        geojson.resetStyle(e.target);
+        info.update();
+      }
+
+      function onEachFeature(feature, layer) {
+        layer.on({
+          mouseover: highlightFeature,
+          mouseout: resetHighlight
+        });
+      }
+
       var map = L.map('map').setView(initialCoordinates, intialScale);
-      L.geoJson(regionsCoordinates, { style: style }).addTo(map);
+      geojson = L.geoJson(regionsCoordinates, {
+        style: style,
+        onEachFeature: onEachFeature
+      }).addTo(map);
+
+      var info = L.control({ position: 'bottomleft' });
+
+      info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+      };
+
+      // method that we will use to update the control based on feature properties passed
+      info.update = function (props) {
+        var text = '<div class="info-region">';
+
+        if (props) {
+          var regionData = regionsData[props.iso_3166_2];
+
+          text += '<div class="region-name">' + regionData.name + '<br />' + regionData.name_ru + '</div>';
+          text += '<div class="region-grp">' + regionData.grp + ' UAH</div>';
+        } else {
+          text += 'Hover over a region<br />Укажите регион';
+        }
+
+        text += '</div>';
+        text += '<div class="info-header">';
+        text += '<h4>Ukraine GRP per capita distribution (2012)</h4>';
+        text += '<h4>Распределение украинского ВРП на душу (2012)</h4>';
+        text += '</div>';
+        this._div.innerHTML = text;
+      };
+
+      info.addTo(map);
     }
   }
 
