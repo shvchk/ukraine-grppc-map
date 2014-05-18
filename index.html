@@ -33,7 +33,7 @@
   }
 
   .info-header h4 {
-    background: #6c6;
+    background: #7af;
     color: #fff;
     margin: 0;
     padding: .5em 1em;
@@ -117,10 +117,10 @@
         var fillOpacity = region.grp / grpMax;
 
         return {
-          fillColor: '#000',
+          color: '#fff',
+          opacity: 1,
           weight: 1,
-          opacity: .2,
-          color: '#000',
+          fillColor: '#000',
           fillOpacity: fillOpacity
         };
       }
@@ -132,8 +132,7 @@
 
         layer.setStyle({
           weight: 2,
-          opacity: 1,
-          color: '#6c6'
+          color: '#ff4'
         });
 
         if (!L.Browser.ie && !L.Browser.opera) {
@@ -156,6 +155,10 @@
       }
 
       var map = L.map('map').setView(initialCoordinates, intialScale);
+      L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
+        id: 'shevchuk.i8eh460b',
+      }).addTo(map);
+
       geojson = L.geoJson(regionsCoordinates, {
         style: style,
         onEachFeature: onEachFeature
