@@ -30,7 +30,6 @@ function dataLoad() {
 
     var grpMin = grp[0];
     var grpMax = grp[grp.length - 1];
-    var grpMedian = median(grp);
 
     function style(feature) {
       var regionId = feature.properties.iso_3166_2;
@@ -129,19 +128,4 @@ function loadJSON(uri, callback) {
       callback(xobj.responseText);
     }
   };
-}
-
-function median(arr) {
-  if (arr.length == 0) {
-    return null
-  }
-
-  arr.sort(function (a, b) { return a - b });
-  var mid = Math.floor(arr.length / 2);
-
-  if ((arr.length % 2) == 1) { // length is odd
-    return arr[mid];
-  } else {
-    return (arr[mid - 1] + arr[mid]) / 2;
-  }
 }
